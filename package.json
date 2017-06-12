@@ -1,0 +1,38 @@
+{
+  "name": "graceful-process",
+  "version": "1.0.0",
+  "description": "graceful exit process even parent exit on SIGKILL.",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "lint": "eslint *.js test",
+    "test": "npm run lint && npm run test-local",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
+    "autod": "autod",
+    "ci": "npm run lint && npm run cov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:node-modules/graceful-process.git"
+  },
+  "bug": {
+    "url": "https://github.com/node-modules/graceful-process/issues"
+  },
+  "author": "fengmk2",
+  "dependencies": {},
+  "devDependencies": {
+    "autod": "^2.8.0",
+    "coffee": "^3.3.2",
+    "egg-bin": "^3.4.2",
+    "egg-ci": "^1.7.0",
+    "eslint": "^3.19.0",
+    "eslint-config-egg": "^4.2.0",
+    "mz-modules": "^1.0.0",
+    "urllib": "^2.22.0"
+  },
+  "ci": {
+    "version": "6, 7, 8"
+  }
+}
