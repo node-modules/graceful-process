@@ -8,4 +8,9 @@ http.createServer((req, res) => {
 }).listen(8000);
 
 console.log(`Worker ${process.pid} started`);
+require('../..')({
+  logger: console,
+  label: 'test-child',
+});
+// run again should work
 require('../..')();

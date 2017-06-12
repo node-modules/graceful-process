@@ -7,7 +7,7 @@ const sleep = require('mz-modules/sleep');
 const urllib = require('urllib');
 
 const fixtures = path.join(__dirname, 'fixtures');
-const waitStart = process.env.CI ? 20000 : 2000;
+const waitStart = process.env.COV ? 30000 : 2000;
 
 describe('test/index.test.js', () => {
   describe('cluster', () => {
@@ -34,6 +34,11 @@ describe('test/index.test.js', () => {
       const result = yield urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
       assert(result.data.toString() === 'hello world\n');
+      // suicide
+      const result2 = yield urllib.request('http://127.0.0.1:8000/suicide');
+      assert(result2.status === 200);
+      assert(result2.data.toString() === 'hello world\n');
+      yield sleep(1000);
       // make sure all workers exit by itself after SIGTERM event fired
       child.proc.kill('SIGTERM');
       yield sleep(1000);

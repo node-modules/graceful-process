@@ -7,7 +7,7 @@ module.exports = (options = {}) => {
   const logger = options.logger || console;
   const label = options.label || `graceful-process#${process.pid}`;
   if (process[init]) {
-    logger.warn('[graceful-process] [%s] init already', label);
+    logger.warn('[%s] graceful-process init already', label);
     return;
   }
   process[init] = true;
