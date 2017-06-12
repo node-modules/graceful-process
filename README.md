@@ -11,11 +11,11 @@ graceful exit process even parent exit on SIGKILL.
 
 [npm-image]: https://img.shields.io/npm/v/graceful-process.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/graceful-process
-[travis-image]: https://img.shields.io/travis/{{org}}/graceful-process.svg?style=flat-square
-[travis-url]: https://travis-ci.org/{{org}}/graceful-process
-[codecov-image]: https://codecov.io/gh/{{org}}/graceful-process/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/{{org}}/graceful-process
-[david-image]: https://img.shields.io/david/{{org}}/graceful-process.svg?style=flat-square
+[travis-image]: https://img.shields.io/travis/node-modules/graceful-process.svg?style=flat-square
+[travis-url]: https://travis-ci.org/node-modules/graceful-process
+[codecov-image]: https://codecov.io/gh/node-modules/graceful-process/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/node-modules/graceful-process
+[david-image]: https://img.shields.io/david/node-modules/graceful-process.svg?style=flat-square
 [david-url]: https://david-dm.org/{{org}}/graceful-process
 [snyk-image]: https://snyk.io/test/npm/graceful-process/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/graceful-process
