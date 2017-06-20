@@ -7,7 +7,7 @@ const sleep = require('mz-modules/sleep');
 const urllib = require('urllib');
 
 const fixtures = path.join(__dirname, 'fixtures');
-const waitStart = process.env.COV ? 30000 : 2000;
+const waitStart = process.env.COV ? 5000 : 2000;
 
 describe('test/index.test.js', () => {
   describe('cluster', () => {
