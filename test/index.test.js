@@ -7,7 +7,7 @@ const sleep = require('mz-modules/sleep');
 const urllib = require('urllib');
 
 const fixtures = path.join(__dirname, 'fixtures');
-const waitStart = process.env.COV ? 30000 : 2000;
+const waitStart = process.env.COV ? 5000 : 2000;
 
 describe('test/index.test.js', () => {
   describe('cluster', () => {
@@ -41,9 +41,12 @@ describe('test/index.test.js', () => {
       yield sleep(1000);
       // make sure all workers exit by itself after SIGTERM event fired
       child.proc.kill('SIGTERM');
-      yield sleep(1000);
+      yield sleep(2000);
       child.notExpect('stderr', /receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
-      child.expect('stdout', /receive signal SIGTERM, exiting with code:0/);
+      if (process.platform !== 'win32') {
+        // windows can't handle SIGTERM signal
+        child.expect('stdout', /receive signal SIGTERM, exiting with code:0/);
+      }
       child.expect('stdout', /exit with code:0/);
       child.expect('stdout', /worker \d+ died, code 0, signal null/);
     });
@@ -60,9 +63,11 @@ describe('test/index.test.js', () => {
       assert(result.data.toString() === 'hello world\n');
       // the worker exit by graceful-process
       child.proc.kill('SIGKILL');
-      yield sleep(1000);
-      child.expect('stderr', /receive disconnect event on child_process fork mode, exiting with code:110/);
-      child.expect('stderr', /exit with code:110/);
+      yield sleep(2000);
+      if (process.platform !== 'win32') {
+        child.expect('stderr', /receive disconnect event on child_process fork mode, exiting with code:110/);
+        child.expect('stderr', /exit with code:110/);
+      }
     });
   });
 
