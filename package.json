@@ -21,6 +21,7 @@
     "url": "https://github.com/node-modules/graceful-process/issues"
   },
   "author": "fengmk2",
+  "license": "MIT",
   "dependencies": {
 
   },
@@ -29,16 +30,13 @@
     "coffee": "^4.0.1",
     "cross-env": "^5.0.1",
     "egg-bin": "^4.0.0",
-    "egg-ci": "^1.7.0",
+    "egg-ci": "^1.8.0",
     "eslint": "^4.0.0",
     "eslint-config-egg": "^4.2.1",
     "mz-modules": "^1.0.0",
     "urllib": "^2.22.0"
   },
   "ci": {
-    "version": "6, 7, 8",
-    "command": {
-      "appveyor": "test"
-    }
+    "version": "6, 7, 8"
   }
 }
