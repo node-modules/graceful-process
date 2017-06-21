@@ -48,7 +48,7 @@ describe('test/index.test.js', () => {
       child.notExpect('stderr', /\[app-worker-2\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
       if (process.platform !== 'win32') {
         // windows can't handle SIGTERM signal
-        child.expect('stdout', /\[app-worker-1\] receive signal SIGTERM, exiting with code:0/);
+        child.expect('stdout', /\[app-worker-\d\] receive signal SIGTERM, exiting with code:0/);
       }
       child.expect('stdout', /\[app-worker-1\] exit with code:0/);
       child.expect('stdout', /\[app-worker-2\] exit with code:0/);
