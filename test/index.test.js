@@ -22,8 +22,10 @@ describe('test/index.test.js', () => {
       // all workers exit by cluster
       child.proc.kill('SIGKILL');
       yield sleep(1000);
-      child.expect('stderr', /receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
-      child.expect('stdout', /exit with code:0/);
+      child.expect('stderr', /\[app-worker-1\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
+      child.expect('stderr', /\[app-worker-2\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
+      child.expect('stdout', /\[app-worker-1\] exit with code:0/);
+      child.expect('stdout', /\[app-worker-2\] exit with code:0/);
     });
 
     it('should workers auto exit when master kill by SIGTERM', function* () {
@@ -42,12 +44,14 @@ describe('test/index.test.js', () => {
       // make sure all workers exit by itself after SIGTERM event fired
       child.proc.kill('SIGTERM');
       yield sleep(2000);
-      child.notExpect('stderr', /receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
+      child.notExpect('stderr', /\[app-worker-1\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
+      child.notExpect('stderr', /\[app-worker-2\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
       if (process.platform !== 'win32') {
         // windows can't handle SIGTERM signal
-        child.expect('stdout', /receive signal SIGTERM, exiting with code:0/);
+        child.expect('stdout', /\[app-worker-\d\] receive signal SIGTERM, exiting with code:0/);
       }
-      child.expect('stdout', /exit with code:0/);
+      child.expect('stdout', /\[app-worker-1\] exit with code:0/);
+      child.expect('stdout', /\[app-worker-2\] exit with code:0/);
       child.expect('stdout', /worker \d+ died, code 0, signal null/);
     });
   });
@@ -65,8 +69,8 @@ describe('test/index.test.js', () => {
       child.proc.kill('SIGKILL');
       yield sleep(2000);
       if (process.platform !== 'win32') {
-        child.expect('stderr', /receive disconnect event on child_process fork mode, exiting with code:110/);
-        child.expect('stderr', /exit with code:110/);
+        child.expect('stderr', /\[test-child\] receive disconnect event on child_process fork mode, exiting with code:110/);
+        child.expect('stderr', /\[test-child\] exit with code:110/);
       }
     });
   });

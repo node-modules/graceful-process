@@ -29,7 +29,7 @@
     "autod": "^2.8.0",
     "coffee": "^4.0.1",
     "cross-env": "^5.0.1",
-    "egg-bin": "^4.0.0",
+    "egg-bin": "^4.0.4",
     "egg-ci": "^1.8.0",
     "eslint": "^4.0.0",
     "eslint-config-egg": "^4.2.1",

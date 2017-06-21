@@ -35,5 +35,7 @@ if (cluster.isMaster) {
   }).listen(8000);
 
   console.log(`Worker ${process.pid} started`);
-  require('../..')();
+  require('../..')({
+    label: 'app-worker-' + cluster.worker.id,
+  });
 }
