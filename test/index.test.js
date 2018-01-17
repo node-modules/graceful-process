@@ -28,6 +28,23 @@ describe('test/index.test.js', () => {
       child.expect('stdout', /\[app-worker-2\] exit with code:0/);
     });
 
+    it('should don\'t print info log', function* () {
+      const startFile = path.join(fixtures, 'cluster.js');
+      const child = coffee.fork(startFile, { env: { NODE_LOG_LEVEL: 'warn' } })
+        .debug();
+      yield sleep(waitStart);
+      const result = yield urllib.request('http://127.0.0.1:8000/');
+      assert(result.status === 200);
+      assert(result.data.toString() === 'hello world\n');
+      // all workers exit by cluster
+      child.proc.kill('SIGKILL');
+      yield sleep(1000);
+      child.expect('stderr', /\[app-worker-1\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
+      child.expect('stderr', /\[app-worker-2\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
+      child.notExpect('stdout', /\[app-worker-1\] exit with code:0/);
+      child.notExpect('stdout', /\[app-worker-2\] exit with code:0/);
+    });
+
     it('should workers auto exit when master kill by SIGTERM', function* () {
       const startFile = path.join(fixtures, 'cluster.js');
       const child = coffee.fork(startFile)

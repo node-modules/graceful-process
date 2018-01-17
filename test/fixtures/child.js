@@ -11,6 +11,7 @@ console.log(`Worker ${process.pid} started`);
 require('../..')({
   logger: console,
   label: 'test-child',
+  logLevel: process.env.NODE_LOG_LEVEL,
 });
 // run again should work
 require('../..')();
