@@ -5,9 +5,26 @@ const init = Symbol('graceful-process-init');
 
 module.exports = (options = {}) => {
   const logger = options.logger || console;
+  let logLevel = (options.logLevel || 'info').toLowerCase();
+  if (logger !== console) {
+    // don't handle custom logger level
+    logLevel = 'info';
+  }
+  const printLogLevels = {
+    info: true,
+    warn: true,
+    error: true,
+  };
+  if (logLevel === 'warn') {
+    printLogLevels.info = false;
+  } else if (logLevel === 'error') {
+    printLogLevels.info = false;
+    printLogLevels.warn = false;
+  }
   const label = options.label || `graceful-process#${process.pid}`;
+
   if (process[init]) {
-    logger.warn('[%s] graceful-process init already', label);
+    printLogLevels.warn && logger.warn('[%s] graceful-process init already', label);
     return;
   }
   process[init] = true;
@@ -15,13 +32,13 @@ module.exports = (options = {}) => {
   // https://github.com/eggjs/egg-cluster/blob/master/lib/agent_worker.js#L35
   // exit gracefully
   process.once('SIGTERM', () => {
-    logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+    printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
     process.exit(0);
   });
 
   process.once('exit', code => {
     const level = code === 0 ? 'info' : 'error';
-    logger[level]('[%s] exit with code:%s', label, code);
+    printLogLevels[level] && logger[level]('[%s] exit with code:%s', label, code);
   });
 
   if (cluster.worker) {
@@ -30,7 +47,6 @@ module.exports = (options = {}) => {
     cluster.worker.once('disconnect', () => {
       // ignore suicide disconnect event
       if (cluster.worker.exitedAfterDisconnect) return;
-
       logger.error('[%s] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false', label);
     });
   } else {
