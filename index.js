@@ -1,6 +1,10 @@
 'use strict';
 
 const cluster = require('cluster');
+const once = require('once');
+const is = require('is-type-of');
+const assert = require('assert');
+
 const init = Symbol('graceful-process-init');
 
 module.exports = (options = {}) => {
@@ -29,11 +33,31 @@ module.exports = (options = {}) => {
   }
   process[init] = true;
 
+  if (options.beforeExit) assert(is.function(options.beforeExit), 'beforeExit only support function');
+  const beforeExit = options.beforeExit;
+  const exit = once(code => {
+    if (!beforeExit) process.exit(code);
+    const p = options.beforeExit();
+    if (is.promise(p)) {
+      p
+        .then(() => {
+          logger.info('[%s] beforeExit success', label);
+          process.exit(code);
+        })
+        .catch(err => {
+          logger.error('[%s] beforeExit fail, error: %s', label, err.message);
+          process.exit(code);
+        });
+    } else {
+      process.exit(code);
+    }
+  });
+
   // https://github.com/eggjs/egg-cluster/blob/master/lib/agent_worker.js#L35
   // exit gracefully
   process.once('SIGTERM', () => {
     printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
-    process.exit(0);
+    exit(0);
   });
 
   process.once('exit', code => {
@@ -56,7 +80,7 @@ module.exports = (options = {}) => {
       setImmediate(() => {
         // if disconnect event emit, maybe master exit in accident
         logger.error('[%s] receive disconnect event on child_process fork mode, exiting with code:110', label);
-        process.exit(110);
+        exit(110);
       });
     });
   }

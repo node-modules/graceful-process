@@ -5,6 +5,7 @@ const path = require('path');
 const coffee = require('coffee');
 const sleep = require('mz-modules/sleep');
 const urllib = require('urllib');
+const mm = require('mm');
 
 const fixtures = path.join(__dirname, 'fixtures');
 const waitStart = process.env.COV ? 5000 : 2000;
@@ -106,6 +107,72 @@ describe('test/index.test.js', () => {
       yield sleep(1000);
       child.expect('stderr', /222receive disconnect event on child_process fork mode, exiting with code:110/);
       child.expect('stderr', /222exit with code:110/);
+    });
+  });
+
+  describe('beforeExit', () => {
+    afterEach(mm.restore);
+
+    it('should support normal function', function* () {
+      mm(process.env, 'MODE', '');
+      const startFile = path.join(fixtures, 'before-exit.js');
+      const child = coffee.fork(startFile)
+        .debug();
+      yield sleep(waitStart);
+      const result = yield urllib.request('http://127.0.0.1:8000/');
+      assert(result.status === 200);
+
+      child.proc.kill();
+      yield sleep(5000);
+      child.expect('stdout', /process exit/);
+      child.expect('stdout', /exit with code:0/);
+    });
+
+    it('should support function return promise', function* () {
+      mm(process.env, 'MODE', 'promise');
+      const startFile = path.join(fixtures, 'before-exit.js');
+      const child = coffee.fork(startFile)
+        .debug();
+      yield sleep(waitStart);
+      const result = yield urllib.request('http://127.0.0.1:8000/');
+      assert(result.status === 200);
+
+      child.proc.kill();
+      yield sleep(5000);
+      child.expect('stdout', /process exiting\nprocess exited/);
+      child.expect('stdout', /exit with code:0/);
+    });
+
+    if (parseInt(process.versions.node) < 8) return;
+
+    it('should support async function', function* () {
+      mm(process.env, 'MODE', 'async');
+      const startFile = path.join(fixtures, 'before-exit.js');
+      const child = coffee.fork(startFile)
+        .debug();
+      yield sleep(waitStart);
+      const result = yield urllib.request('http://127.0.0.1:8000/');
+      assert(result.status === 200);
+
+      child.proc.kill();
+      yield sleep(5000);
+      child.expect('stdout', /process exiting\nprocess exited/);
+      child.expect('stdout', /exit with code:0/);
+    });
+
+    it('should exit when promise reject', function* () {
+      mm(process.env, 'MODE', 'reject');
+      const startFile = path.join(fixtures, 'before-exit.js');
+      const child = coffee.fork(startFile)
+        .debug();
+      yield sleep(waitStart);
+      const result = yield urllib.request('http://127.0.0.1:8000/');
+      assert(result.status === 200);
+
+      child.proc.kill();
+      yield sleep(5000);
+      child.expect('stderr', /beforeExit fail, error: reject/);
+      child.expect('stdout', /exit with code:0/);
     });
   });
 });
