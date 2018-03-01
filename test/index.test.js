@@ -139,7 +139,7 @@ describe('test/index.test.js', () => {
 
       child.proc.kill();
       yield sleep(5000);
-      child.expect('stderr', /beforeExit success/);
+      child.expect('stdout', /beforeExit success/);
       child.expect('stdout', /process exiting\nprocess exited/);
       child.expect('stdout', /exit with code:0/);
     });
@@ -157,7 +157,7 @@ describe('test/index.test.js', () => {
 
       child.proc.kill();
       yield sleep(5000);
-      child.expect('stderr', /beforeExit success/);
+      child.expect('stdout', /beforeExit success/);
       child.expect('stdout', /process exiting\nprocess exited/);
       child.expect('stdout', /exit with code:0/);
     });
