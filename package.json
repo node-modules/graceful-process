@@ -3,7 +3,8 @@
   "version": "1.1.0",
   "description": "graceful exit process even parent exit on SIGKILL.",
   "files": [
-    "index.js"
+    "index.js",
+    "exit.js"
   ],
   "scripts": {
     "lint": "eslint *.js test",
@@ -11,6 +12,7 @@
     "test-local": "egg-bin test",
     "cov": "cross-env COV=true egg-bin cov",
     "autod": "autod",
+    "pkgfiles": "egg-bin pkgfiles",
     "ci": "npm run lint && npm run cov"
   },
   "repository": {
