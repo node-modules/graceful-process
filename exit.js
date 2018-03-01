@@ -11,26 +11,18 @@ function getExitFunction(beforeExit, logger, label) {
 
   return once(code => {
     if (!beforeExit) process.exit(code);
-    let p;
-    try {
-      p = beforeExit();
-    } catch (err) {
-      logger.error('[%s] beforeExit fail, error: %s', label, err.message);
-      process.exit(code);
-    }
-    if (is.promise(p)) {
-      p
-        .then(() => {
-          logger.info('[%s] beforeExit success', label);
-          process.exit(code);
-        })
-        .catch(err => {
-          logger.error('[%s] beforeExit fail, error: %s', label, err.message);
-          process.exit(code);
-        });
-    } else {
-      process.exit(code);
-    }
+    Promise.resolve()
+      .then(() => {
+        return beforeExit();
+      })
+      .then(() => {
+        logger.info('[%s] beforeExit success', label);
+        process.exit(code);
+      })
+      .catch(err => {
+        logger.error('[%s] beforeExit fail, error: %s', label, err.message);
+        process.exit(code);
+      });
   });
 
 }
