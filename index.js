@@ -1,9 +1,7 @@
 'use strict';
 
 const cluster = require('cluster');
-const once = require('once');
-const is = require('is-type-of');
-const assert = require('assert');
+const getExitFunction = require('./exit');
 
 const init = Symbol('graceful-process-init');
 
@@ -33,25 +31,7 @@ module.exports = (options = {}) => {
   }
   process[init] = true;
 
-  if (options.beforeExit) assert(is.function(options.beforeExit), 'beforeExit only support function');
-  const beforeExit = options.beforeExit;
-  const exit = once(code => {
-    if (!beforeExit) process.exit(code);
-    const p = options.beforeExit();
-    if (is.promise(p)) {
-      p
-        .then(() => {
-          logger.info('[%s] beforeExit success', label);
-          process.exit(code);
-        })
-        .catch(err => {
-          logger.error('[%s] beforeExit fail, error: %s', label, err.message);
-          process.exit(code);
-        });
-    } else {
-      process.exit(code);
-    }
-  });
+  const exit = getExitFunction(options.beforeExit, logger, label);
 
   // https://github.com/eggjs/egg-cluster/blob/master/lib/agent_worker.js#L35
   // exit gracefully

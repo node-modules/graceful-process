@@ -13,13 +13,18 @@ switch (process.env.MODE) {
   case 'async':
     beforeExit = require('./_async');
     break;
-  case 'reject':
-    beforeExit = require('./_reject');
+  case 'async-error':
+    beforeExit = require('./_async_error');
     break;
   case 'promise':
     beforeExit = () => {
       console.log('process exiting');
       return sleep(1000).then(() => console.log('process exited'));
+    };
+    break;
+  case 'function-error':
+    beforeExit = () => {
+      throw new Error('process exit');
     };
     break;
   default:

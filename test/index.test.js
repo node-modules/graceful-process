@@ -162,8 +162,8 @@ describe('test/index.test.js', () => {
       child.expect('stdout', /exit with code:0/);
     });
 
-    it('should exit when promise reject', function* () {
-      mm(process.env, 'MODE', 'reject');
+    it('should exit when async error', function* () {
+      mm(process.env, 'MODE', 'async-error');
       const startFile = path.join(fixtures, 'before-exit.js');
       const child = coffee.fork(startFile)
         .debug();
@@ -174,6 +174,21 @@ describe('test/index.test.js', () => {
       child.proc.kill();
       yield sleep(5000);
       child.expect('stderr', /beforeExit fail, error: reject/);
+      child.expect('stdout', /exit with code:0/);
+    });
+
+    it('should exit when function error', function* () {
+      mm(process.env, 'MODE', 'function-error');
+      const startFile = path.join(fixtures, 'before-exit.js');
+      const child = coffee.fork(startFile)
+        .debug();
+      yield sleep(waitStart);
+      const result = yield urllib.request('http://127.0.0.1:8000/');
+      assert(result.status === 200);
+
+      child.proc.kill();
+      yield sleep(5000);
+      child.expect('stderr', /beforeExit fail, error: process exit/);
       child.expect('stdout', /exit with code:0/);
     });
   });
