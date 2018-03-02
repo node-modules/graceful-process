@@ -1,4 +1,10 @@
 
+1.2.0 / 2018-03-02
+==================
+
+**features**
+  * [[`0f0069c`](http://github.com/node-modules/graceful-process/commit/0f0069cb5f97ae1f4f6c80b0b6f5d5f7e6f9ae4c)] - feat: add beforeExit options (#4) (Haoliang Gao <<sakura9515@gmail.com>>)
+
 1.1.0 / 2018-01-17
 ==================
 
