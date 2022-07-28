@@ -24,6 +24,7 @@ module.exports = (options = {}) => {
     printLogLevels.warn = false;
   }
   const label = options.label || `graceful-process#${process.pid}`;
+  const timeout = options.timeout || parseInt(process.env.GRACEFUL_TIMEOUT) || 5000;
 
   if (process[init]) {
     printLogLevels.warn && logger.warn('[%s] graceful-process init already', label);
@@ -31,7 +32,7 @@ module.exports = (options = {}) => {
   }
   process[init] = true;
 
-  const exit = getExitFunction(options.beforeExit, logger, label);
+  const exit = getExitFunction(options.beforeExit, logger, label, timeout);
 
   // https://github.com/eggjs/egg-cluster/blob/master/lib/agent_worker.js#L35
   // exit gracefully

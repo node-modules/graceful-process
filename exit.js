@@ -1,20 +1,16 @@
 'use strict';
 
 const assert = require('assert');
-const is = require('is-type-of');
 const once = require('once');
+const pt = require('promise-timeout');
 
-module.exports = getExitFunction;
-
-function getExitFunction(beforeExit, logger, label) {
-  if (beforeExit) assert(is.function(beforeExit), 'beforeExit only support function');
+module.exports = function getExitFunction(beforeExit, logger, label, timeout) {
+  assert(!beforeExit || typeof beforeExit === 'function', 'beforeExit only support function');
 
   return once(code => {
     if (!beforeExit) process.exit(code);
-    Promise.resolve()
-      .then(() => {
-        return beforeExit();
-      })
+
+    pt.timeout(new Promise(resolve => resolve(beforeExit())), timeout)
       .then(() => {
         logger.info('[%s] beforeExit success', label);
         process.exit(code);
@@ -24,5 +20,4 @@ function getExitFunction(beforeExit, logger, label) {
         process.exit(code);
       });
   });
-
-}
+};

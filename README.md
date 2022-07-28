@@ -2,25 +2,13 @@
 
 graceful exit process even parent exit on SIGKILL.
 
-[![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
-[![Test coverage][codecov-image]][codecov-url]
-[![David deps][david-image]][david-url]
-[![Known Vulnerabilities][snyk-image]][snyk-url]
-[![NPM download][download-image]][download-url]
+[![NPM version](https://img.shields.io/npm/v/graceful-process.svg?style=flat-square)](https://npmjs.org/package/graceful-process)
+[![NPM quality](http://npm.packagequality.com/shield/graceful-process.svg?style=flat-square)](http://packagequality.com/#?package=graceful-process)
+[![NPM download](https://img.shields.io/npm/dm/graceful-process.svg?style=flat-square)](https://npmjs.org/package/graceful-process)
 
-[npm-image]: https://img.shields.io/npm/v/graceful-process.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/graceful-process
-[travis-image]: https://img.shields.io/travis/node-modules/graceful-process.svg?style=flat-square
-[travis-url]: https://travis-ci.org/node-modules/graceful-process
-[codecov-image]: https://codecov.io/gh/node-modules/graceful-process/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/node-modules/graceful-process
-[david-image]: https://img.shields.io/david/node-modules/graceful-process.svg?style=flat-square
-[david-url]: https://david-dm.org/{{org}}/graceful-process
-[snyk-image]: https://snyk.io/test/npm/graceful-process/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/graceful-process
-[download-image]: https://img.shields.io/npm/dm/graceful-process.svg?style=flat-square
-[download-url]: https://npmjs.org/package/graceful-process
+[![Continuous Integration](https://github.com/node-modules/graceful-process/actions/workflows/nodejs.yml/badge.svg)](https://github.com/node-modules/graceful-process/actions/workflows/nodejs.yml)
+[![Test coverage](https://img.shields.io/codecov/c/github/node-modules/graceful-process.svg?style=flat-square)](https://codecov.io/gh/node-modules/graceful-process)
+
 
 ## Install
 

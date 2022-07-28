@@ -22,6 +22,14 @@ switch (process.env.MODE) {
       return sleep(1000).then(() => console.log('process exited'));
     };
     break;
+  case 'timeout':
+    beforeExit = () => {
+      console.log('process exiting');
+      return sleep(5000).then(() => {
+        throw new Error('should no run here');
+      });
+    };
+    break;
   case 'function-error':
     beforeExit = () => {
       throw new Error('process exit');
