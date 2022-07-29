@@ -7,10 +7,15 @@ const pt = require('promise-timeout');
 module.exports = function getExitFunction(beforeExit, logger, label, timeout) {
   assert(!beforeExit || typeof beforeExit === 'function', 'beforeExit only support function');
 
-  return once(code => {
-    if (!beforeExit) process.exit(code);
+  // only call beforeExit once
+  const handler = once(() => {
+    return new Promise(resolve => {
+      resolve(beforeExit && beforeExit());
+    });
+  });
 
-    pt.timeout(new Promise(resolve => resolve(beforeExit())), timeout)
+  return function exitFunction(code) {
+    pt.timeout(handler(), timeout)
       .then(() => {
         logger.info('[%s] beforeExit success', label);
         process.exit(code);
@@ -19,5 +24,5 @@ module.exports = function getExitFunction(beforeExit, logger, label, timeout) {
         logger.error('[%s] beforeExit fail, error: %s', label, err.message);
         process.exit(code);
       });
-  });
+  };
 };
