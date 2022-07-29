@@ -5,10 +5,17 @@ const path = require('path');
 const coffee = require('coffee');
 const sleep = require('mz-modules/sleep');
 const urllib = require('urllib');
+const fkill = require('fkill');
 const mm = require('mm');
 
 const fixtures = path.join(__dirname, 'fixtures');
 const waitStart = process.env.COV ? 5000 : 2000;
+
+async function killChild(child, force) {
+  console.log('killing %s', child.proc.pid);
+  await fkill(child.proc.pid, { force, silent: true });
+  console.log('killed %s', child.proc.pid);
+}
 
 describe('test/index.test.js', () => {
   describe('cluster', () => {
@@ -21,7 +28,7 @@ describe('test/index.test.js', () => {
       assert(result.status === 200);
       assert(result.data.toString() === 'hello world\n');
       // all workers exit by cluster
-      child.proc.kill('SIGKILL');
+      await killChild(child, true);
       await sleep(1000);
       child.expect('stderr', /\[app-worker-1\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
       child.expect('stderr', /\[app-worker-2\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
@@ -38,7 +45,7 @@ describe('test/index.test.js', () => {
       assert(result.status === 200);
       assert(result.data.toString() === 'hello world\n');
       // all workers exit by cluster
-      child.proc.kill('SIGKILL');
+      await killChild(child, true);
       await sleep(1000);
       child.expect('stderr', /\[app-worker-1\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
       child.expect('stderr', /\[app-worker-2\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/);
@@ -84,7 +91,7 @@ describe('test/index.test.js', () => {
       assert(result.status === 200);
       assert(result.data.toString() === 'hello world\n');
       // the worker exit by graceful-process
-      child.proc.kill('SIGKILL');
+      await killChild(child, true);
       await sleep(2000);
       if (process.platform !== 'win32') {
         child.expect('stderr', /\[test-child\] receive disconnect event on child_process fork mode, exiting with code:110/);
@@ -103,7 +110,7 @@ describe('test/index.test.js', () => {
       assert(result.status === 200);
       assert(result.data.toString() === 'hello world\n');
       // the worker exit by graceful-process
-      child.proc.kill('SIGKILL');
+      await killChild(child, true);
       await sleep(1000);
       child.expect('stderr', /222receive disconnect event on child_process fork mode, exiting with code:110/);
       child.expect('stderr', /222exit with code:110/);
@@ -122,7 +129,7 @@ describe('test/index.test.js', () => {
       const result = await urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
 
-      child.proc.kill();
+      await killChild(child);
       await sleep(5000);
       child.expect('stdout', /process exit/);
       child.expect('stdout', /exit with code:0/);
@@ -137,7 +144,7 @@ describe('test/index.test.js', () => {
       const result = await urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
 
-      child.proc.kill();
+      await killChild(child);
       await sleep(5000);
       child.expect('stdout', /beforeExit success/);
       child.expect('stdout', /process exiting\nprocess exited/);
@@ -153,7 +160,7 @@ describe('test/index.test.js', () => {
       const result = await urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
 
-      child.proc.kill();
+      await killChild(child);
       await sleep(5000);
       child.expect('stdout', /beforeExit success/);
       child.expect('stdout', /process exiting\nprocess exited/);
@@ -169,7 +176,7 @@ describe('test/index.test.js', () => {
       const result = await urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
 
-      child.proc.kill();
+      await killChild(child);
       await sleep(5000);
       child.expect('stderr', /beforeExit fail, error: reject/);
       child.expect('stdout', /exit with code:0/);
@@ -184,7 +191,7 @@ describe('test/index.test.js', () => {
       const result = await urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
 
-      child.proc.kill();
+      await killChild(child);
       await sleep(5000);
       child.expect('stderr', /beforeExit fail, error: process exit/);
       child.expect('stdout', /exit with code:0/);
@@ -200,7 +207,7 @@ describe('test/index.test.js', () => {
       const result = await urllib.request('http://127.0.0.1:8000/');
       assert(result.status === 200);
 
-      child.proc.kill();
+      await killChild(child);
       await sleep(5000);
       child.expect('stderr', /beforeExit fail, error: Timeout/);
       child.expect('stdout', /exit with code:0/);
