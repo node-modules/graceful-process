@@ -7,3 +7,7 @@ run/
 .DS_Store
 *.swp
 .tmp
+.tshy*
+.eslintcache
+dist
+coverage
