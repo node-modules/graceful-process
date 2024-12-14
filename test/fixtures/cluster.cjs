@@ -1,7 +1,6 @@
-'use strict';
-
-const cluster = require('cluster');
-const http = require('http');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const cluster = require('node:cluster');
+const http = require('node:http');
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
@@ -35,7 +34,8 @@ if (cluster.isMaster) {
   }).listen(8000);
 
   console.log(`Worker ${process.pid} started`);
-  require('../..')({
+  const { graceful } = require('../..');
+  graceful({
     label: 'app-worker-' + cluster.worker.id,
     logLevel: process.env.NODE_LOG_LEVEL,
   });

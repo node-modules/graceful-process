@@ -1,6 +1,5 @@
-'use strict';
-
-const sleep = require('mz-modules/sleep');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const { setTimeout: sleep } = require('node:timers/promises');
 
 module.exports = async () => {
   console.log('process exiting');

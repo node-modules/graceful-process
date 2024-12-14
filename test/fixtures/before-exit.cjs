@@ -1,7 +1,7 @@
-'use strict';
-
-const http = require('http');
-const sleep = require('mz-modules/sleep');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const http = require('node:http');
+const { setTimeout: sleep } = require('node:timers/promises');
+const { graceful } = require('../..');
 
 http.createServer((req, res) => {
   res.writeHead(200);
@@ -11,10 +11,10 @@ http.createServer((req, res) => {
 let beforeExit;
 switch (process.env.MODE) {
   case 'async':
-    beforeExit = require('./_async');
+    beforeExit = require('./_async.cjs');
     break;
   case 'async-error':
-    beforeExit = require('./_async_error');
+    beforeExit = require('./_async_error.cjs');
     break;
   case 'promise':
     beforeExit = () => {
@@ -42,10 +42,10 @@ switch (process.env.MODE) {
 }
 
 console.log(`Worker ${process.pid} started`);
-require('../..')({
+graceful({
   logger: console,
   beforeExit,
 });
 
 // run again should work
-require('../..')();
+graceful();
