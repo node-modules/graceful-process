@@ -34,6 +34,6 @@ graceful({ logger: console, label: 'mycli-child-cmd' });
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo={group/repo})](https://github.com/{group/repo}/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=node-modules/graceful-process)](https://github.com/node-modules/graceful-process/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
