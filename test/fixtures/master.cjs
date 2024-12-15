@@ -4,8 +4,6 @@ const path = require('node:path');
 
 const childFile = path.join(__dirname, 'child.cjs');
 
-childProcess.spawn(process.execPath, [ childFile ], {
-  stdio: 'inherit',
-});
+childProcess.fork(childFile);
 
-console.log('master %s %s done', process.execPath, childFile);
+console.log('master fork %s done', childFile);

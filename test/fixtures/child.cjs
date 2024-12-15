@@ -1,6 +1,6 @@
-'use strict';
-
-const http = require('http');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const http = require('node:http');
+const { graceful } = require('../..');
 
 http.createServer((req, res) => {
   res.writeHead(200);
@@ -8,10 +8,11 @@ http.createServer((req, res) => {
 }).listen(8000);
 
 console.log(`Worker ${process.pid} started`);
-require('../..')({
+graceful({
   logger: console,
   label: 'test-child',
   logLevel: process.env.NODE_LOG_LEVEL,
 });
+
 // run again should work
-require('../..')();
+graceful();

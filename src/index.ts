@@ -1,13 +1,20 @@
-'use strict';
+import cluster from 'node:cluster';
+import { getExitFunction } from './exit.js';
+import type { Logger, BeforeExit } from './types.js';
 
-const cluster = require('cluster');
-const getExitFunction = require('./exit');
+const INITED = Symbol('graceful-process-init');
 
-const init = Symbol('graceful-process-init');
+export interface Options {
+  logger?: Logger;
+  logLevel?: string;
+  label?: string;
+  timeout?: number;
+  beforeExit?: BeforeExit;
+}
 
-module.exports = (options = {}) => {
+export function graceful(options: Options = {}) {
   const logger = options.logger || console;
-  let logLevel = (options.logLevel || 'info').toLowerCase();
+  let logLevel = (options.logLevel ?? 'info').toLowerCase();
   if (logger !== console) {
     // don't handle custom logger level
     logLevel = 'info';
@@ -23,16 +30,16 @@ module.exports = (options = {}) => {
     printLogLevels.info = false;
     printLogLevels.warn = false;
   }
-  const label = options.label || `graceful-process#${process.pid}`;
-  const timeout = options.timeout || parseInt(process.env.GRACEFUL_TIMEOUT) || 5000;
+  const label = options.label ?? `graceful-process#${process.pid}`;
+  const timeout = options.timeout ?? parseInt(process.env.GRACEFUL_TIMEOUT ?? '5000');
 
-  if (process[init]) {
+  if (Reflect.get(process, INITED)) {
     printLogLevels.warn && logger.warn('[%s] graceful-process init already', label);
     return;
   }
-  process[init] = true;
+  Reflect.set(process, INITED, true);
 
-  const exit = getExitFunction(options.beforeExit, logger, label, timeout);
+  const exit = getExitFunction(logger, label, timeout, options.beforeExit);
 
   // https://github.com/eggjs/egg-cluster/blob/master/lib/agent_worker.js#L35
   // exit gracefully
@@ -51,7 +58,9 @@ module.exports = (options = {}) => {
     // https://github.com/nodejs/node/blob/6caf1b093ab0176b8ded68a53ab1ab72259bb1e0/lib/internal/cluster/child.js#L28
     cluster.worker.once('disconnect', () => {
       // ignore suicide disconnect event
-      if (cluster.worker.exitedAfterDisconnect) return;
+      if (cluster.worker?.exitedAfterDisconnect) {
+        return;
+      }
       logger.error('[%s] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false', label);
     });
   } else {
@@ -65,4 +74,4 @@ module.exports = (options = {}) => {
       });
     });
   }
-};
+}
