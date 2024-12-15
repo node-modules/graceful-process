@@ -1,3 +1,45 @@
+# Changelog
+
+## [2.0.0](https://github.com/node-modules/graceful-process/compare/v1.2.0...v2.0.0) (2024-12-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 18.19.0 support
+
+part of https://github.com/eggjs/egg/issues/3644
+
+https://github.com/eggjs/egg/issues/5257
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai
+-->
+## Summary by CodeRabbit
+
+## Release Notes
+
+- **New Features**
+- Introduced new GitHub Actions workflows for publishing and release
+processes.
+- Added TypeScript configuration for stricter type-checking and modern
+module support.
+  - New exit handler functionality for graceful application termination.
+
+- **Documentation**
+- Updated README.md for clarity on usage and installation instructions.
+  
+- **Bug Fixes**
+  - Improved error handling and logging in the exit process.
+
+- **Chores**
+- Updated `.gitignore` and `package.json` to reflect new structure and
+dependencies.
+  - Modified CI pipeline to use updated Node.js versions.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->
+
+### Features
+
+* support cjs and esm both by tshy ([#8](https://github.com/node-modules/graceful-process/issues/8)) ([a31a80e](https://github.com/node-modules/graceful-process/commit/a31a80e76480ada98ff73a5c57a52c7602d0d32a))
+* support timeout && drop node 14 support ([#6](https://github.com/node-modules/graceful-process/issues/6)) ([8551bae](https://github.com/node-modules/graceful-process/commit/8551baef2c2bc49e9e36fe95830f8a90668fbe08))
 
 1.2.0 / 2018-03-02
 ==================
