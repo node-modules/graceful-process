@@ -82,6 +82,28 @@ describe('test/index.test.ts', () => {
       // no exit event on coverage mode
       // child.expect('stdout', /worker \d+ died, code 0, signal null/);
     });
+
+    it('should always listen sigterm work', async () => {
+      const startFile = path.join(fixtures, 'cluster.cjs');
+      const child: any = coffee.fork(startFile, [], {
+        env: {
+          ...process.env,
+          ALWAYS_ON_SIGTERM: 'Y',
+        },
+      })
+        .debug();
+      await sleep(waitStart);
+      child.proc.kill('SIGTERM');
+      await sleep(2200);
+      if (process.platform !== 'win32') {
+        // windows can't handle SIGTERM signal
+        child.expect('stdout', /\[app-worker-\d\] receive signal SIGTERM, exiting with code:0/);
+        child.expect('stdout', /\[app-worker-\d\] receive signal SIGTERM again, waiting for exit/);
+        child.expect('stdout', /exit after 1000ms/);
+      }
+      child.expect('stdout', /\[app-worker-1\] exit with code:0/);
+      child.expect('stdout', /\[app-worker-2\] exit with code:0/);
+    });
   });
 
   describe('child_process.fork', () => {
@@ -99,6 +121,28 @@ describe('test/index.test.ts', () => {
       if (process.platform !== 'win32') {
         child.expect('stderr', /\[test-child\] receive disconnect event on child_process fork mode, exiting with code:110/);
         child.expect('stderr', /\[test-child\] exit with code:110/);
+      }
+    });
+
+    it('should always listen sigterm work', async () => {
+      const startFile = path.join(fixtures, 'master-sigterm.cjs');
+      const child: any = coffee.fork(startFile, [], {
+        env: {
+          ...process.env,
+          ALWAYS_ON_SIGTERM: 'Y',
+        },
+      })
+        .debug();
+      await sleep(waitStart);
+      // the worker exit by graceful-process
+      child.proc.kill('SIGTERM');
+      await sleep(2000);
+      if (process.platform !== 'win32') {
+        // windows can't handle SIGTERM signal
+        child.expect('stdout', /\[test-child\] receive signal SIGTERM, exiting with code:0/);
+        child.expect('stdout', /\[test-child\] receive signal SIGTERM again, waiting for exit/);
+        child.expect('stdout', /exit after 1000ms/);
+        child.expect('stdout', /\[test-child\] exit with code:0/);
       }
     });
   });
