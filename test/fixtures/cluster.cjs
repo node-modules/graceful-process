@@ -15,12 +15,22 @@ if (cluster.isMaster) {
   });
 
   process.once('SIGTERM', () => {
-    for (const id in cluster.workers) {
-      cluster.workers[id].process.kill('SIGTERM');
+    const killWorkers = () => {
+      for (const id in cluster.workers) {
+        cluster.workers[id].process.kill('SIGTERM');
+      }
+    };
+
+    killWorkers();
+
+    if (process.env.ALWAYS_ON_SIGTERM) {
+      setTimeout(killWorkers, 50);
+      setTimeout(() => process.exit(0), 2100);
+    } else {
+      setTimeout(() => {
+        process.exit(0);
+      }, 100);
     }
-    setTimeout(() => {
-      process.exit(0);
-    }, 100);
   });
 } else {
   // Workers can share any TCP connection
@@ -35,8 +45,16 @@ if (cluster.isMaster) {
 
   console.log(`Worker ${process.pid} started`);
   const { graceful } = require('../..');
-  graceful({
+  const options = {
     label: 'app-worker-' + cluster.worker.id,
     logLevel: process.env.NODE_LOG_LEVEL,
-  });
+  };
+  if (process.env.ALWAYS_ON_SIGTERM) {
+    options.sigterm = 'always';
+    options.beforeExit = async () => {
+      await new Promise(r => setTimeout(r, 1000));
+      console.log('exit after 1000ms');
+    };
+  }
+  graceful(options);
 }

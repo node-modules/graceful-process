@@ -8,11 +8,19 @@ http.createServer((req, res) => {
 }).listen(8000);
 
 console.log(`Worker ${process.pid} started`);
-graceful({
+const options = {
   logger: console,
   label: 'test-child',
   logLevel: process.env.NODE_LOG_LEVEL,
-});
+};
+if (process.env.ALWAYS_ON_SIGTERM) {
+  options.sigterm = 'always';
+  options.beforeExit = async () => {
+    await new Promise(r => setTimeout(r, 1000));
+    console.log('exit after 1000ms');
+  };
+}
+graceful(options);
 
 // run again should work
 graceful();
