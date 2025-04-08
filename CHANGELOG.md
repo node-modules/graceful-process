@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/node-modules/graceful-process/compare/v2.0.0...v2.1.0) (2025-04-08)
+
+
+### Features
+
+* support using process.on to listen SIGTERM ([#10](https://github.com/node-modules/graceful-process/issues/10)) ([b3d3626](https://github.com/node-modules/graceful-process/commit/b3d3626c8a00525827b86697a8c0327cc4d86723))
+
 ## [2.0.0](https://github.com/node-modules/graceful-process/compare/v1.2.0...v2.0.0) (2024-12-15)
 
 
