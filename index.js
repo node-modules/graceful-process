@@ -35,10 +35,23 @@ module.exports = (options = {}) => {
 
   // https://github.com/eggjs/egg-cluster/blob/master/lib/agent_worker.js#L35
   // exit gracefully
-  process.once('SIGTERM', () => {
-    printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
-    exit(0);
-  });
+  if (options.sigterm === 'always') {
+    let called = false;
+    process.on('SIGTERM', () => {
+      if (called) {
+        printLogLevels.info && logger.info('[%s] receive signal SIGTERM again, waiting for exit', label);
+        return;
+      }
+      called = true;
+      printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+      exit(0);
+    });
+  } else {
+    process.once('SIGTERM', () => {
+      printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+      exit(0);
+    });
+  }
 
   process.once('exit', code => {
     const level = code === 0 ? 'info' : 'error';
