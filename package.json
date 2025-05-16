@@ -40,7 +40,7 @@
     "pretest": "npm run lint -- --fix && npm run prepublishOnly",
     "test": "vitest run --testTimeout=30000",
     "preci": "npm run lint && npm run prepublishOnly",
-    "ci": "npm run test -- --coverage",
+    "ci": "vitest run --testTimeout=30000 --coverage",
     "postci": "npm run prepublishOnly",
     "prepublishOnly": "tshy && tshy-after && attw --pack",
     "prepare": "husky"
