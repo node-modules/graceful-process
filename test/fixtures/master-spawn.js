@@ -4,7 +4,7 @@ const path = require('node:path');
 
 const childFile = path.join(__dirname, 'child.cjs');
 
-childProcess.spawn(process.execPath, [ childFile ], {
+childProcess.spawn(process.execPath, [childFile], {
   stdio: 'inherit',
 });
 

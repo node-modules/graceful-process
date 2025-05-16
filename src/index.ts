@@ -1,4 +1,7 @@
 import cluster from 'node:cluster';
+
+import { env } from 'read-env-value';
+
 import { getExitFunction } from './exit.js';
 import type { Logger, BeforeExit } from './types.js';
 
@@ -32,10 +35,12 @@ export function graceful(options: Options = {}) {
     printLogLevels.warn = false;
   }
   const label = options.label ?? `graceful-process#${process.pid}`;
-  const timeout = options.timeout ?? parseInt(process.env.GRACEFUL_TIMEOUT ?? '5000');
+  const timeout = options.timeout ?? env('GRACEFUL_TIMEOUT', 'number', 5000);
 
   if (Reflect.get(process, INITED)) {
-    printLogLevels.warn && logger.warn('[%s] graceful-process init already', label);
+    if (printLogLevels.warn) {
+      logger.warn('[%s] graceful-process init already', label);
+    }
     return;
   }
   Reflect.set(process, INITED, true);
@@ -48,23 +53,34 @@ export function graceful(options: Options = {}) {
     let called = false;
     process.on('SIGTERM', () => {
       if (called) {
-        printLogLevels.info && logger.info('[%s] receive signal SIGTERM again, waiting for exit', label);
+        if (printLogLevels.info) {
+          logger.info(
+            '[%s] receive signal SIGTERM again, waiting for exit',
+            label
+          );
+        }
         return;
       }
       called = true;
-      printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+      if (printLogLevels.info) {
+        logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+      }
       exit(0);
     });
   } else {
     process.once('SIGTERM', () => {
-      printLogLevels.info && logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+      if (printLogLevels.info) {
+        logger.info('[%s] receive signal SIGTERM, exiting with code:0', label);
+      }
       exit(0);
     });
   }
 
   process.once('exit', code => {
     const level = code === 0 ? 'info' : 'error';
-    printLogLevels[level] && logger[level]('[%s] exit with code:%s', label, code);
+    if (printLogLevels[level]) {
+      logger[level]('[%s] exit with code:%s', label, code);
+    }
   });
 
   if (cluster.worker) {
@@ -75,7 +91,10 @@ export function graceful(options: Options = {}) {
       if (cluster.worker?.exitedAfterDisconnect) {
         return;
       }
-      logger.error('[%s] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false', label);
+      logger.error(
+        '[%s] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false',
+        label
+      );
     });
   } else {
     // child_process mode
@@ -83,7 +102,10 @@ export function graceful(options: Options = {}) {
       // wait a loop for SIGTERM event happen
       setImmediate(() => {
         // if disconnect event emit, maybe master exit in accident
-        logger.error('[%s] receive disconnect event on child_process fork mode, exiting with code:110', label);
+        logger.error(
+          '[%s] receive disconnect event on child_process fork mode, exiting with code:110',
+          label
+        );
         exit(110);
       });
     });

@@ -3,10 +3,12 @@ const http = require('node:http');
 const { setTimeout: sleep } = require('node:timers/promises');
 const { graceful } = require('../..');
 
-http.createServer((req, res) => {
-  res.writeHead(200);
-  res.end('hello world\n');
-}).listen(8000);
+http
+  .createServer((req, res) => {
+    res.writeHead(200);
+    res.end('hello world\n');
+  })
+  .listen(8000);
 
 let beforeExit;
 switch (process.env.MODE) {

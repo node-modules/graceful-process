@@ -2,10 +2,12 @@
 const http = require('node:http');
 const { graceful } = require('../..');
 
-http.createServer((req, res) => {
-  res.writeHead(200);
-  res.end('hello world\n');
-}).listen(8000);
+http
+  .createServer((req, res) => {
+    res.writeHead(200);
+    res.end('hello world\n');
+  })
+  .listen(8000);
 
 console.log(`Worker ${process.pid} started`);
 const options = {
