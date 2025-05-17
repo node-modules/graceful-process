@@ -14,30 +14,43 @@
   "engines": {
     "node": ">= 18.19.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "read-env-value": "^1.1.0"
+  },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.1",
-    "@eggjs/tsconfig": "1",
-    "@types/mocha": "10",
+    "@arethetypeswrong/cli": "^0.18.1",
+    "@eggjs/tsconfig": "2",
     "@types/node": "22",
-    "coffee": "^5.5.1",
-    "egg-bin": "6",
-    "eslint": "8",
-    "eslint-config-egg": "14",
-    "fkill": "^7.2.1",
-    "mm": "^3.4.0",
+    "@vitest/coverage-v8": "3",
+    "coffee": "5",
+    "fkill": "9",
+    "husky": "9",
+    "lint-staged": "15",
+    "mm": "4",
+    "oxlint": "^0.16.10",
+    "prettier": "3",
     "tshy": "3",
     "tshy-after": "1",
     "typescript": "5",
-    "urllib": "^4.6.8"
+    "urllib": "4",
+    "vitest": "3"
   },
   "scripts": {
-    "lint": "eslint --cache src test --ext .ts",
+    "lint": "oxlint",
     "pretest": "npm run lint -- --fix && npm run prepublishOnly",
-    "test": "egg-bin test",
+    "test": "vitest run --testTimeout=30000",
     "preci": "npm run lint && npm run prepublishOnly",
-    "ci": "egg-bin cov && attw --pack",
-    "prepublishOnly": "tshy && tshy-after"
+    "ci": "vitest run --testTimeout=30000 --coverage",
+    "postci": "npm run prepublishOnly",
+    "prepublishOnly": "tshy && tshy-after && attw --pack",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --fix"
+    ]
   },
   "type": "module",
   "tshy": {

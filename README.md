@@ -17,11 +17,11 @@ npm i graceful-process
 
 ## Usage
 
-Require this module and execute it on every child process file.
+Import this module and execute it on every child process file.
 
-```js
-// mycli.js
-const { graceful } = require('graceful-process');
+```ts
+// mycli.ts
+import { graceful } from 'graceful-process';
 
 graceful({ logger: console, label: 'mycli-child-cmd' });
 ```
