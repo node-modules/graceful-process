@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/node-modules/graceful-process/compare/v2.1.0...v2.2.0) (2025-05-17)
+
+
+### Features
+
+* use read-env-value ([#11](https://github.com/node-modules/graceful-process/issues/11)) ([a2aa78a](https://github.com/node-modules/graceful-process/commit/a2aa78ad9eb4fce74d70b64d92af29f55f2debcd))
+
 ## [2.1.0](https://github.com/node-modules/graceful-process/compare/v2.0.0...v2.1.0) (2025-04-08)
 
 
