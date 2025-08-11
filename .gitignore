@@ -11,3 +11,4 @@ run/
 .eslintcache
 dist
 coverage
+package-lock.json
