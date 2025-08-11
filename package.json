@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
+    "@eggjs/oxlint-config": "^1.0.0",
     "@eggjs/tsconfig": "2",
     "@types/node": "22",
     "@vitest/coverage-v8": "3",
@@ -27,7 +28,7 @@
     "husky": "9",
     "lint-staged": "15",
     "mm": "4",
-    "oxlint": "^0.16.10",
+    "oxlint": "^1.11.1",
     "prettier": "3",
     "tshy": "3",
     "tshy-after": "1",
